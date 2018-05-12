@@ -16,6 +16,21 @@ Entity.SHAPES = {
 		{x: -.5, y: .07}
 	],
 
+	RAPTOR_DECK: [
+		{x: -.37, y: -.12}, 
+		{x: -.34, y: -.12},
+		{x: -.31, y: -.15},
+		{x: .31, y: -.15},
+		{x: .34, y: -.12},
+		{x: .37, y: -.12},
+		{x: .37, y: .12}, 
+		{x: .34, y: .12},
+		{x: .31, y: .15},
+		{x: -.31, y: .15},
+		{x: -.34, y: .12},
+		{x: -.37, y: .12}
+	],
+
 	WHEEL: [
 		{x: -.05, y:-.04},
 		{x: .05, y:-.04},
@@ -49,6 +64,10 @@ Entity.BaseBoard = function(name, length, x, y, pixelsPerMeter, color) {
 	this.pixelsPerMeter = pixelsPerMeter;
 	this.color = color;
 
+	this.scale = function(value) {
+		return value * this.length * this.pixelsPerMeter;
+	}
+
 	this.transformPoints = function(arr) {
 		// Must duplicate
 		var result = [];
@@ -80,9 +99,11 @@ Entity.BaseBoard = function(name, length, x, y, pixelsPerMeter, color) {
 	this.render = function(ctx) {
 		var deck = Entity.SHAPES.CRUISER_DECK;
 		ctx.fillStyle = "#825201";
+		ctx.strokeStyle = "#FFFFFF";
 		
 		this.renderShape(ctx, deck);
 		ctx.fill();
+		//ctx.stroke();
 
 		ctx.fillStyle = this.color;
 
@@ -106,6 +127,41 @@ Entity.BaseBoard = function(name, length, x, y, pixelsPerMeter, color) {
 
 Entity.Raptor = function(name, length, x, y, pixelsPerMeter, color) {
 	Entity.BaseBoard.call(this, name, length, x, y, pixelsPerMeter, color);
+
+	this.render = function(ctx) {
+		ctx.fillStyle = "#000000";
+
+		var wheel = Entity.translate(Entity.SHAPES.WHEEL, -.38, .12);
+		this.renderShape(ctx, wheel);
+		ctx.fill();
+
+		var wheel = Entity.translate(Entity.SHAPES.WHEEL, .40, .12);
+		this.renderShape(ctx, wheel);
+		ctx.fill();
+
+		var wheel = Entity.translate(Entity.SHAPES.WHEEL, -.38, -.12);
+		this.renderShape(ctx, wheel);
+		ctx.fill();
+
+		var wheel = Entity.translate(Entity.SHAPES.WHEEL, .40, -.12);
+		this.renderShape(ctx, wheel);
+		ctx.fill();
+
+		ctx.fillStyle = "#825201";
+
+		deck = Entity.translate(Entity.SHAPES.RAPTOR_DECK, .03, 0);
+		this.renderShape(ctx, deck);
+		ctx.fill();
+
+		center = this.transformPoints([{x: .38, y: 0}])[0];
+
+		ctx.beginPath();
+		ctx.arc(center.x, center.y, this.scale(.12), -Math.PI / 2, Math.PI / 2);
+		ctx.fill();
+
+		back = this.transformPoints([{x: -.5, y: -.12}])[0];
+		ctx.fillRect(back.x, back.y, this.scale(.2), this.scale(.24));
+	}
 }
 
 Entity.REGISTERY = {
