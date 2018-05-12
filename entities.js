@@ -4,11 +4,11 @@ Entity.REGISTERY = {};
 // Entity "factory"
 Entity.getBoard = function(name, length, x, y, pixelsPerMeter, color) {
 	if (!(name in Entity.REGISTERY)) {
-		return new Entity.BaseBoard(length, x, y, pixelsPerMeter, color);
+		return new Entity.BaseBoard(name, length, x, y, pixelsPerMeter, color);
 	}
 
 	else {
-		return new Entity.REGISTERY[name](length, x, y, pixelsPerMeter, color);
+		return new Entity.REGISTERY[name](name, length, x, y, pixelsPerMeter, color);
 	}
 }
 
@@ -52,7 +52,8 @@ Entity.translate = function(points, x, y) {
 }
 
 // Base board class
-Entity.BaseBoard = function(length, x, y, pixelsPerMeter, color) {
+Entity.BaseBoard = function(name, length, x, y, pixelsPerMeter, color) {
+	this.name = name;
 	this.x = x;
 	this.y = y;
 
