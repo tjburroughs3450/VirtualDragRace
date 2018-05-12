@@ -1,10 +1,12 @@
+var raceWindow;  // For console
+
 // Start your motors...
 window.onload = function() {
 	var boardData = [];
 	addBoardDataToRace(boardData, "Boosted Board", "#FF0000", 1, [{x: 1, y: 2}, {x: 2, y: 3}], "None");
 	addBoardDataToRace(boardData, "Boosted Stealth", "#000000", 1, [{x: 1, y: 3}, {x: 2, y: 4}], "None");
-	var raceWindow = new RaceWindow(boardData, 10, 500);
-	raceWindow.start();
+	raceWindow = new RaceWindow(boardData, 10, 500);
+	//raceWindow.start();
 }
 
 // Augments existing board array with data needed for new contender
@@ -90,8 +92,6 @@ function RaceWindow(boardData, raceLength, width) {
 		this.samples[board.name] = {velocity: velocity, maxSpeed: maxSpeed, maxSpeedIndex: maxSpeedIndex};
 	}
 
-	console.log(this.samples["Boosted Stealth"]);
-
 	// State counter
 	this.counter = 0;
 
@@ -107,9 +107,7 @@ function RaceWindow(boardData, raceLength, width) {
 		if (finish - start > this.period)
 			console.log("Running slow");
 
-		if (this.running) {
-			setTimeout(this.renderLoop.bind(this), this.period - (finish - start));
-		}
+		setTimeout(this.renderLoop.bind(this), this.period - (finish - start));
 	};
 
 	// Render logic
@@ -123,6 +121,10 @@ function RaceWindow(boardData, raceLength, width) {
 
 	// Update logic
 	this.update = function() {
+		if (!this.running) {
+			return;
+		}
+
 		for (var i = 0; i < this.entities.length; i++) {
 			var entity = this.entities[i];
 			var velocity_data = this.samples[entity.name];
@@ -155,10 +157,12 @@ function RaceWindow(boardData, raceLength, width) {
 
 	this.start = function() {
 		this.running = true;
-		this.renderLoop();
 	};
 
 	this.stop = function() {
 		this.running = false;
 	};
+
+	// Start drawing
+	this.renderLoop();
 }
