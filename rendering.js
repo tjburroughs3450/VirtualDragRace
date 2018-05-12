@@ -4,7 +4,7 @@ var raceWindow;  // For console
 window.onload = function() {
 	var boardData = [];
 	addBoardDataToRace(boardData, "Boosted Board", "#FF0000", 1, [{x: 1, y: 2}, {x: 2, y: 3}], "None");
-	addBoardDataToRace(boardData, "Boosted Stealth", "#000000", 1, [{x: 1, y: 3}, {x: 2, y: 4}], "None");
+	addBoardDataToRace(boardData, "raptor", "#000000", 1, [{x: 1, y: 3}, {x: 2, y: 4}], "None");
 	raceWindow = new RaceWindow(boardData, 10, 500);
 	//raceWindow.start();
 }

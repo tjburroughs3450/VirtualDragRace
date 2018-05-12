@@ -1,17 +1,5 @@
 var Entity = {};
 
-Entity.REGISTERY = {};
-// Entity "factory"
-Entity.getBoard = function(name, length, x, y, pixelsPerMeter, color) {
-	if (!(name in Entity.REGISTERY)) {
-		return new Entity.BaseBoard(name, length, x, y, pixelsPerMeter, color);
-	}
-
-	else {
-		return new Entity.REGISTERY[name](name, length, x, y, pixelsPerMeter, color);
-	}
-}
-
 Entity.SHAPES = {
 	CRUISER_DECK: [
 		{x: -.5, y: -.07}, 
@@ -114,4 +102,23 @@ Entity.BaseBoard = function(name, length, x, y, pixelsPerMeter, color) {
 		this.renderShape(ctx, wheel);
 		ctx.fill();
 	};
+}
+
+Entity.Raptor = function(name, length, x, y, pixelsPerMeter, color) {
+	Entity.BaseBoard.call(this, name, length, x, y, pixelsPerMeter, color);
+}
+
+Entity.REGISTERY = {
+	"raptor": Entity.Raptor
+};
+
+// Entity "factory"
+Entity.getBoard = function(name, length, x, y, pixelsPerMeter, color) {
+	if (!(name in Entity.REGISTERY)) {
+		return new Entity.BaseBoard(name, length, x, y, pixelsPerMeter, color);
+	}
+
+	else {
+		return new Entity.REGISTERY[name](name, length, x, y, pixelsPerMeter, color);
+	}
 }
