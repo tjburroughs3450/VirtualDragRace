@@ -28,7 +28,7 @@ DataProcessing.getSamplingArray = function(timeArray, dataArray, desiredRate)
     }
 
     return samplingArray;
-}
+};
 
 // Creates a new array containing the samples at locations marked in the sampling array
 // (see getSamplingArray description).
@@ -36,7 +36,7 @@ DataProcessing.resampleArray = function(dataArray, samplingArray)
 {
     console.assert(dataArray.length == samplingArray.length, "Array lengths must match");
     
-    resampledArray = [];
+    var resampledArray = [];
     var resampledIndex = 0;
     for (var i = 0; i < samplingArray.length; ++i)
     {
@@ -45,4 +45,10 @@ DataProcessing.resampleArray = function(dataArray, samplingArray)
     }
 
     return resampledArray;
-}
+};
+
+DataProcessing.mphToMs = function(dataArray) {
+    for (var i = 0; i < dataArray.length; i++) {
+        dataArray[i] *= 0.44704;
+    }
+};

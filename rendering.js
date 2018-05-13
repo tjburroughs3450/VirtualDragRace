@@ -1,31 +1,6 @@
-var raceWindow;  // For console
+var Rendering = {};
 
-// Start your motors...
-window.onload = function() {
-	var boardData = [];
-	addBoardDataToRace(boardData, "Boosted Board", "#FF0000", 1, [{x: 1, y: 2}, {x: 2, y: 3}], "None");
-	addBoardDataToRace(boardData, "raptor", "#000000", 1, [{x: 1, y: 3}, {x: 2, y: 4}], "None");
-	addBoardDataToRace(boardData, "riptide", "#42f1f4", .787, [{x: 1, y: 3}, {x: 2, y: 4}], "None");
-	addBoardDataToRace(boardData, "shortboard", "#000000", .787, [{x: 1, y: 3}, {x: 2, y: 4}], "None");
-	raceWindow = new RaceWindow(boardData, 10, 1080);
-	//raceWindow.start();
-}
-
-// Augments existing board array with data needed for new contender
-function addBoardDataToRace(data, boardName, boardColor, boardLength, velocityData, boardModel) {
-	data.push({
-		name: boardName,
-		color: boardColor,
-		length: boardLength,
-		samples: velocityData,
-		model: boardModel
-	});
-
-	// Just to be safe...
-	return data;
-}
-
-function RaceWindow(boardData, raceLength, width) {
+Rendering.RaceWindow = function(boardData, raceLength, width) {
 	// To align the fronts of the decks, max length must be determined
 	var maxLength = 0;
 
@@ -167,4 +142,4 @@ function RaceWindow(boardData, raceLength, width) {
 
 	// Start drawing
 	this.renderLoop();
-}
+};
