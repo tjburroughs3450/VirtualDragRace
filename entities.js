@@ -267,12 +267,12 @@ Entity.REGISTERY = {
 };
 
 // Entity "factory"
-Entity.getBoard = function(name, length, x, y, pixelsPerMeter, color) {
-	if (!(name in Entity.REGISTERY)) {
+Entity.getBoard = function(name, length, x, y, pixelsPerMeter, color, model) {
+	if (!(model in Entity.REGISTERY)) {
 		return new Entity.BaseBoard(name, length, x, y, pixelsPerMeter, color);
 	}
 
 	else {
-		return new Entity.REGISTERY[name](name, length, x, y, pixelsPerMeter, color);
+		return new Entity.REGISTERY[model](name, length, x, y, pixelsPerMeter, color);
 	}
 }

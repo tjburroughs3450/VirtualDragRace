@@ -63,5 +63,5 @@ DataLoader.create = function(boardNames, raceLength, width) {
         boardData.push(DataLoader.data[boardNames[i]]);
     }
 
-    return new Rendering.RaceWindow(boardData, raceLength, width);
+    return new Rendering.RaceWindow(boardData, SETTINGS.RENDER_FPS, raceLength, width);
 };

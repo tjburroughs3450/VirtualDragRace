@@ -1,6 +1,6 @@
 var Rendering = {};
 
-Rendering.RaceWindow = function(boardData, raceLength, width) {
+Rendering.RaceWindow = function(boardData, frequency, raceLength, width) {
 	// To align the fronts of the decks, max length must be determined
 	var maxLength = 0;
 
@@ -24,7 +24,7 @@ Rendering.RaceWindow = function(boardData, raceLength, width) {
 	document.body.appendChild(this.canvas);
 
 	// Render period
-	this.period = 1000.0 * (boardData[0].samples[1].x - boardData[0].samples[0].x);
+	this.period = 1000.0 / frequency;
 
 	// Run flag
 	this.running = false;
@@ -42,7 +42,8 @@ Rendering.RaceWindow = function(boardData, raceLength, width) {
 			maxLength - board.length / 2,
 			(i + .5) * SETTINGS.RACE_LANE_METERS,
 			this.pixels_per_meter,
-			board.color
+			board.color,
+			board.model
 		));
 	}
 
@@ -51,14 +52,18 @@ Rendering.RaceWindow = function(boardData, raceLength, width) {
 
 	for (var i = 0; i < boardData.length; i++) {
 		var board = boardData[i];
-		var velocity = [];
 		var maxSpeed = 0;
 		var maxSpeedIndex = 0;
 
-		for (var j = 0; j < board.samples.length; j++) {
-			var speed = board.samples[j].y;
-			
-			velocity.push(speed);
+		var speeds = [];
+		var timeDeltas = [];
+
+		for (var j = 1; j < board.samples.length; j++) {
+			var speed = (board.samples[j].y + board.samples[j - 1].y) / 2.0;
+			var timeDelta = board.samples[j].x - board.samples[j - 1].x;
+
+			speeds.push(speed);
+			timeDeltas.push(timeDelta);
 
 			if (speed > maxSpeed) {
 				maxSpeed = speed;
@@ -66,7 +71,7 @@ Rendering.RaceWindow = function(boardData, raceLength, width) {
 			}
 		}
 
-		this.samples[board.name] = {velocity: velocity, maxSpeed: maxSpeed, maxSpeedIndex: maxSpeedIndex};
+		this.samples[board.name] = {speeds: speeds, timeDeltas: timeDeltas, maxSpeed: maxSpeed, maxSpeedIndex: maxSpeedIndex};
 	}
 
 	// State counter
@@ -106,17 +111,15 @@ Rendering.RaceWindow = function(boardData, raceLength, width) {
 			var entity = this.entities[i];
 			var velocity_data = this.samples[entity.name];
 
-			var speed = 0;
+			var delta = 0;
 
 			if (this.counter >= velocity_data.maxSpeedIndex) {
-				speed = velocity_data.maxSpeed;
+				delta = 1.0 * this.period * velocity_data.maxSpeed / 1000;
 			}
 
 			else {
-				speed = velocity_data.velocity[this.counter];
+				delta = 1.0 * velocity_data.timeDeltas[this.counter] * velocity_data.speeds[this.counter];
 			}
-
-			var delta = Math.round(1.0 * speed * this.period / 1000);
 
 			var adjustedNosePosition = entity.x + entity.length / 2 + delta;
 
@@ -127,9 +130,9 @@ Rendering.RaceWindow = function(boardData, raceLength, width) {
 			else {
 				entity.x += delta;
 			}
-
-			this.counter += 1;
 		}
+
+		this.counter += 1;
 	};
 
 	this.start = function() {
