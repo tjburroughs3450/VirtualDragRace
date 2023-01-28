@@ -20,7 +20,7 @@ Rendering.RaceWindow = function(boardData, frequency, raceLength, width) {
 	this.canvas.setAttribute("style", "background-color:" + SETTINGS.CANVAS_BACK_COLOR + "; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;")
 	this.ctx = this.canvas.getContext("2d");
 	this.canvas.width = width;
-	this.canvas.height = boardData.length * SETTINGS.RACE_LANE_METERS * this.pixels_per_meter;
+	this.canvas.height = boardData.length * (SETTINGS.RACE_LANE_METERS * this.pixels_per_meter + SETTINGS.PIXELS_PER_TEXT_LINE);
 	document.body.appendChild(this.canvas);
 
 	// Render period
@@ -71,7 +71,7 @@ Rendering.RaceWindow = function(boardData, frequency, raceLength, width) {
 			}
 		}
 
-		this.samples[board.name] = {speeds: speeds, timeDeltas: timeDeltas, maxSpeed: maxSpeed, maxSpeedIndex: maxSpeedIndex};
+		this.samples[board.name] = {speeds: speeds, timeDeltas: timeDeltas, maxSpeedIndex: maxSpeedIndex, index: 0};
 	}
 
 	// State counter
@@ -81,8 +81,11 @@ Rendering.RaceWindow = function(boardData, frequency, raceLength, width) {
 	this.renderLoop = function() {
 		var start = Date.now();
 
-		this.update();
 		this.render();
+
+		if (this.update()) {
+			this.counter += 1;
+		}
 
 		finish = Date.now();
 
@@ -95,31 +98,33 @@ Rendering.RaceWindow = function(boardData, frequency, raceLength, width) {
 	// Render logic
 	this.render = function() {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.font = SETTINGS.TEXT_FONT_SIZE + "px " + SETTINGS.TEXT_FONT;
 
 		for (var i = 0; i < this.entities.length; i++) {
 			this.entities[i].render(this.ctx);
+
+			// Draw speedo
+			var velocity_data = this.samples[this.entities[i].name];
+
+			var velocity = velocity_data.index > 0 ? velocity_data.speeds[velocity_data.index] : 0;
+
+			this.ctx.fillStyle = this.entities[i].color;
+			this.ctx.fillText(Math.round(10 * velocity * 2.23694) / 10 + " MPH", SETTINGS.TEXT_X_MARGIN, this.entities.length 
+				* SETTINGS.RACE_LANE_METERS * this.pixels_per_meter + i * SETTINGS.PIXELS_PER_TEXT_LINE + SETTINGS.TEXT_FONT_SIZE / 2);
 		}
 	};
 
 	// Update logic
 	this.update = function() {
 		if (!this.running) {
-			return;
+			return false;
 		}
 
 		for (var i = 0; i < this.entities.length; i++) {
 			var entity = this.entities[i];
 			var velocity_data = this.samples[entity.name];
-
-			var delta = 0;
-
-			if (this.counter >= velocity_data.maxSpeedIndex) {
-				delta = 1.0 * this.period * velocity_data.maxSpeed / 1000;
-			}
-
-			else {
-				delta = 1.0 * velocity_data.timeDeltas[this.counter] * velocity_data.speeds[this.counter];
-			}
+			var index = velocity_data.index;
+			var delta = 1.0 * (index < velocity_data.maxSpeedIndex ? velocity_data.timeDeltas[index] : this.period / 1000.0) * velocity_data.speeds[index];
 
 			var adjustedNosePosition = entity.x + entity.length / 2 + delta;
 
@@ -129,10 +134,14 @@ Rendering.RaceWindow = function(boardData, frequency, raceLength, width) {
 
 			else {
 				entity.x += delta;
+
+				if (index < velocity_data.maxSpeedIndex) {
+					velocity_data.index += 1;
+				}
 			}
 		}
 
-		this.counter += 1;
+		return true;
 	};
 
 	this.start = function() {
