@@ -21,11 +21,7 @@ DataLoader.parseIntoArrays = function(input) {
     return [time, data];
 };
 
-DataLoader.load = function(name, color, length, type, data, category, model) {
-    if (type != "speed" || category != "visible") {
-        return;
-    }
-    
+DataLoader.load = function(name, color, length, data, model) {
     var timeDataArrays = this.parseIntoArrays(data);
     var time = timeDataArrays[0];
     var data = timeDataArrays[1];
