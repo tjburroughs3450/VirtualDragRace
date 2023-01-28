@@ -1,7 +1,3 @@
-// by default, only production boards were shown on the website 
-// set to true to show all boards (some hidden data may be incomplete or inaccurate)
-var SHOW_ALL_BOARDS = false;
-
 function createRace() {
     var length = $("#race_length").val();
 

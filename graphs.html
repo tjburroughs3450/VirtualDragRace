@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <script type="text/javascript">
+			// by default, only production boards were shown on the website 
+			// set to true to show all boards (some hidden data may be incomplete or inaccurate)
+			var SHOW_ALL_BOARDS = false;
+		</script>
+        <script type="text/javascript" src="libs/jquery.js"></script>
+        <script type="text/javascript" src='libs/Chart.bundle.min.js'></script>
+        <script type="text/javascript" src='graphs/signal_processing.js'></script>
+        <script type="text/javascript" src='graphs/graphing.js'></script>
+        <script type="text/javascript" src='graphs/main.js'></script>
+    </head>
+    <body style="background-color:black;">
+        <div id="content", class="enlarge_mobile">
+            <div class="site-aligner">
+                <div id="charts"></div>
+                <br>
+                <div class="section-title">Custom Acceleration Charts</div>
+                <br>
+
+                <form name="custom_chart" onsubmit="return addCustomGraph()">
+                    <font color="white">Start Velocity: </font>
+                    <input type="text" name="v_start"></input>
+                    <font color="white">  End Velocity: </font>
+                    <input type="text" name="v_end"></input>
+                    <font color="white"> </font>
+                    <input type="submit" value="Generate Plot"></input>
+                </form>
+                <br>
+                <div id="custom_charts"></div>
+                <font color="white">All data, figures, and statistics are the property of SkateMetric and may not be reproduced or displayed elsewhere without express consent from its owners.</font>
+
+            </div>
+        </div>
+    </body>
+</html>
